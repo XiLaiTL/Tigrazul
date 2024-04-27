@@ -3,14 +3,14 @@ package `fun`.vari.tigrazul.tree
 import `fun`.vari.tigrazul.action.matchingBoundType
 import `fun`.vari.tigrazul.model.*
 import `fun`.vari.tigrazul.model.Function
-import `fun`.vari.tigrazul.tree.TrigrazulParser.ARROW
+import `fun`.vari.tigrazul.tree.TrigrazulParser.TO
 import `fun`.vari.tigrazul.tree.TrigrazulParser.MAPSTO
 import `fun`.vari.tigrazul.util.Scope
-import javax.xml.crypto.Data
 
 
 class TigrazulMainVisitor(): TrigrazulBaseVisitor<Atom>() {
     private val scope:Scope<Atom> = Scope();
+    private val resourceLocation =ResourceLocation.default; //TODO: add resourceLocation for every module
 
     override fun visitApplication(ctx: TrigrazulParser.ApplicationContext): Atom {
         ctx.statement().forEach { visit(it) }
@@ -49,9 +49,7 @@ class TigrazulMainVisitor(): TrigrazulBaseVisitor<Atom>() {
         scope[name] = identifier
         if(ctx.type==null){
             val value = visit(ctx.value) //TODO: 这里要加一个建构类型的步骤
-            val type = value.type
             identifier.apply {
-                this.type = type
                 this.value = value
             }
         }
@@ -61,8 +59,9 @@ class TigrazulMainVisitor(): TrigrazulBaseVisitor<Atom>() {
             matchingBoundType(type,value)
             //TODO: 这里要基于type去访问value，因为这样有些参数的类型才能拿出来
             //TODO: 这里还得检查value的类型和type的类型匹配与否
+            //Identifier的类型是值的类型，所以这里分离的时候会出问题
+            //没法把type弄给Identifier
             identifier.apply {
-                this.type = type
                 this.value = value
             };
         }
@@ -103,7 +102,7 @@ class TigrazulMainVisitor(): TrigrazulBaseVisitor<Atom>() {
         for(i in ctx.op.size-1 downTo  0 ){
             scope.popStack()
             last = when(ctx.op[i].type){
-                ARROW -> Function(atomList[i],last)
+                TO -> Function(atomList[i],last)
                 MAPSTO -> MapsToFunction(atomList[i],last)
                 else -> throw TigrazulVisitorException at TrigrazulParser.FunctionAtomContext::class
             }
@@ -132,7 +131,6 @@ class TigrazulMainVisitor(): TrigrazulBaseVisitor<Atom>() {
             dataSet.add(Identifier(constructorName).apply { this.type = type })
         }
         identifier.apply {
-            type = Type
             value = dataSet
         }
 

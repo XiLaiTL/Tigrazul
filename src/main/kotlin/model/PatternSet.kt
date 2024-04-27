@@ -2,10 +2,8 @@ package `fun`.vari.tigrazul.model
 
 class PatternSet(
     override val type: Atom
-):Atom() {
+):SingleAtom() {
     private var patterns: MutableList<Atom> = mutableListOf()
-    override val first: Atom = this
-    override var next: Atom? = null
     fun add(pattern:Atom){
         patterns.add(pattern)
     }

@@ -11,9 +11,9 @@ statement
     ;
 
 declaration
-    : CONSEQUENCE identifier ':' atom ';' #termDeclaration
-    | CONSEQUENCE identifier (':' TYPE)? ':=' '{' constructor* '}' ';' #constructorDeclaration
-    | CONSEQUENCE assignmentAtom ';' #assignmentDeclaration
+    : module=(RATAIL|GETS|CONSEQUENCE) identifier ':' atom ';' #termDeclaration
+    | module=(GETS|CONSEQUENCE) identifier (':' TYPE)? ':=' '{' constructor* '}' ';' #constructorDeclaration
+    | module=(RATAIL|GETS|CONSEQUENCE) assignmentAtom ';' #assignmentDeclaration
     ;
 
 atom
@@ -24,12 +24,13 @@ primaryAtom
     : '(' atom ')' #parenAtom
     | identifier #identifierAtom
     | TYPE #typeAtom
+    | STRING PIPE IMPORT #moduleAtom
     | '{' branch* '}'  #patternAtom
     ;
 
 typedAtom : (left+=primaryAtom ':')* right=primaryAtom;
 appliedAtom : (left+=typedAtom PIPE)* right=typedAtom;
-functionAtom : (left+=appliedAtom op+=(ARROW|MAPSTO))* right=appliedAtom;
+functionAtom : (left+=appliedAtom op+=(TO|MAPSTO))* right=appliedAtom;
 assignmentAtom :  identifier (':' type=functionAtom)? ':=' value=functionAtom;
 
 branch
@@ -50,10 +51,13 @@ identifier
     ;
 
 CONSEQUENCE: '\\vdash' | '|-' | '⊢';
-ARROW : '\\rightarrow' | '->' | '→' ;
+RATAIL: '>-'|'⤚';
+GETS: '\\leftarrow'|'\\gets'|'<-'|'←';
+TO : '\\rightarrow'|'\\to' | '->' | '→' ;
 MAPSTO: '\\mapsto' | '|->' | '↦' ;
-PIPE: '\\triangleright' | '|>' | '▷';
+PIPE: '\\triangleright'|'\\rhd' | '|>' | '▷';
 TYPE: 'Type';
+IMPORT: 'Import';
 
 VARIABLE
     : [A-Za-z] [a-zA-Z0-9_\-]* [a-zA-Z0-9]
@@ -68,7 +72,13 @@ WS
     : [ \r\n] -> skip
     ;
 
+STRING: '"' CHAR*  '"';
+fragment CHAR
+    : ~["\\\r\n]
+    | ESCAPE_SEQUENCE
+    ;
+fragment ESCAPE_SEQUENCE: '\\' ["\\];
 
-LineComment
+LINE_COMMENT
     : '#'  ~[\r\n]* -> skip
     ;

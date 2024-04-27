@@ -1,16 +1,16 @@
 package `fun`.vari.tigrazul.model
 
 class Applied(
-    var argument: Atom,
-    var function: Atom
-):Atom() {
+    argument: Atom,
+    function: Atom
+):BinaryAtom(argument,function) {
     override val type: Atom
-        get() = Applied(argument.type,function.type)
-    override val first: Atom
-        get() = argument
-    override var next: Atom?
-        get() = function
-        set(value) { if(value!=null) function = value; }
-    override fun debugInfo() = "[${argument.debugInfo()} ▷ ${function.debugInfo()}]"
-    override fun info() = "(${argument.info()} ▷ ${function.info()})"
+        get() = Applied(left.type,right.type)
+
+    override fun debugInfo() = "[${left.debugInfo()} ▷ ${right.debugInfo()}]"
+    override fun info() = "(${left.info()} ▷ ${right.info()})"
+    fun reduce(){
+
+
+    }
 }

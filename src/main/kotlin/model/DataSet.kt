@@ -1,10 +1,8 @@
 package `fun`.vari.tigrazul.model
 
-class DataSet():Atom() {
+class DataSet():SingleAtom() {
     private var terms:MutableMap<String,Identifier> = mutableMapOf()
     override val type: Atom = Type
-    override val first: Atom = this
-    override var next: Atom? = null
     fun add(identifier: Identifier) {
         terms[identifier.name] = identifier
     }

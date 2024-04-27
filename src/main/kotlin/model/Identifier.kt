@@ -1,22 +1,30 @@
 package `fun`.vari.tigrazul.model
 
-class Identifier(
-    var name: String
-):Atom() {
+import `fun`.vari.tigrazul.struct.IList
+import `fun`.vari.tigrazul.struct.IRUse
+import `fun`.vari.tigrazul.struct.IRUser
+
+
+class Term():SingleAtom(){
     override var type: Atom = Unknown
-    var value:Atom = this
-    override val first: Atom = value
-    override var next: Atom? = null
+
+    override fun debugInfo() = "[Term : ${type.info()}]"
+    override fun info() = "[Term : ${type.info()}]"
+}
+
+class Identifier(
+    var name: String,
+    var resourceLocation:ResourceLocation = ResourceLocation.default
+):UnaryAtom(Term()) {
+    override var type: Atom
+        get() = this.value.type
+        set(type)=
+            when(val value = this.value){
+                is Term -> value.type = type
+                else -> {}
+            }
+
     override fun debugInfo() = "[$name : ${type.info()}"+
-                if(value==this) "]" else " := ${value.debugInfo()} ]"
+                if(value is Term) "]" else " := ${value.debugInfo()} ]"
     override fun info() = "[$name : ${type.info()}]"
 }
-/*
-class Bound(
-    var name: String
-):Atom(){
-    override var type: Atom = Unknown
-    override val first: Atom = this
-    override var next: Atom? = null
-}
- */
