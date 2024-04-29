@@ -1,10 +1,12 @@
 package `fun`.vari.tigrazul.tree
 
 import `fun`.vari.tigrazul.action.matchingBoundType
+import `fun`.vari.tigrazul.action.matchingType
 import `fun`.vari.tigrazul.model.*
 import `fun`.vari.tigrazul.model.Function
 import `fun`.vari.tigrazul.tree.TrigrazulParser.TO
 import `fun`.vari.tigrazul.tree.TrigrazulParser.MAPSTO
+import `fun`.vari.tigrazul.util.Logger
 import `fun`.vari.tigrazul.util.Scope
 
 
@@ -55,10 +57,18 @@ class TigrazulMainVisitor(): TrigrazulBaseVisitor<Atom>() {
         }
         else{
             val type = visit(ctx.type)
-            val value = visit(ctx.value)
-            matchingBoundType(type,value)
+            var value = visit(ctx.value)
             //TODO: 这里要基于type去访问value，因为这样有些参数的类型才能拿出来
+            matchingBoundType(type,value)
             //TODO: 这里还得检查value的类型和type的类型匹配与否
+            val (result,success) = matchingType(type,value)
+            if(success) {
+                value = Verified(value,result)
+            }
+            else{
+                Logger.error("type different")
+            }
+
             //Identifier的类型是值的类型，所以这里分离的时候会出问题
             //没法把type弄给Identifier
             identifier.apply {
@@ -68,13 +78,24 @@ class TigrazulMainVisitor(): TrigrazulBaseVisitor<Atom>() {
         return scope[name]!!
     }
     override fun visitTypedAtom(ctx: TrigrazulParser.TypedAtomContext): Atom {
-        var last = visit(ctx.right)
+        var last = visit(ctx.right) //这里顺序会不会有问题？？ x:x->A这种？
         if(ctx.left == null || ctx.left.isEmpty()) return last //TODO:要防止返回类型为Unknown
         for(primaryAtomCtx in ctx.left.reversed()){
             val previous = visit(primaryAtomCtx)
-            if(previous is Identifier &&previous.type==Unknown) previous.type=last
-            //else TODO("这里做类型检查")
-            last = previous
+            if(previous is Identifier &&previous.type==Unknown) {
+                previous.type=last
+                last = previous
+            }
+            else {
+                //TODO("这里做类型检查")
+                val (result,success) = matchingType(last,previous)
+                if(success) {
+                    last = Verified(previous,result)
+                }
+                else{
+                    Logger.error("type different")
+                }
+            }
         }
         return last
     }

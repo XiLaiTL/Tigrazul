@@ -10,5 +10,6 @@ class PatternSet(
 
     override fun debugInfo() = "{\n\t" + patterns.map { it.debugInfo() }.joinToString("\n\t") + "\n}"
     override fun info() = "{\n\t" + patterns.map { it.info() }.joinToString("\n\t") + "\n}"
+    override fun uniform() = "{|"+ patterns.map { it.info() }.joinToString(";|") +";}"
 
 }

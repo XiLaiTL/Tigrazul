@@ -30,4 +30,17 @@ class NatureNumberTest {
         """.trimIndent()
         analysis(code)
     }
+
+    @Test
+    fun typeCheck(){
+        val code = """
+            |-Nat:Type := {
+                .Succ: Nat -> Nat;
+                .Zero: Nat;
+            };
+            |-b:Nat->Nat->Nat:= x |-> y|->z:Nat |> e:(Nat->Nat) ;
+            |-c:Nat->Nat->Nat:= x |-> y|->z |> e:(Nat->Nat) ;
+        """.trimIndent()
+        analysis(code)
+    }
 }

@@ -8,5 +8,5 @@ class DataSet():SingleAtom() {
     }
     override fun debugInfo() = "{\n\t"+ terms.values.map { it.debugInfo() }.joinToString("\n\t") +"\n}"
     override fun info() = "{\n\t"+ terms.values.map { it.info() }.joinToString("\n\t") +"\n}"
-
+    override fun uniform() = "{."+ terms.values.map { it.info() }.joinToString(";.") +";}"
 }

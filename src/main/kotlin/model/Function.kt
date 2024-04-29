@@ -13,7 +13,7 @@ class Function(parameter:Atom, body:Atom):BinaryAtom(parameter,body) {
 
     override fun debugInfo() = "[${left.debugInfo()} → ${right.debugInfo()}]"
     override fun info() = "(${left.info()} → ${right.info()})"
-
+    override fun uniform() = "(${left.uniform()}->${right.uniform()})"
 }
 
 class MapsToFunction(parameter:Atom, body:Atom):BinaryAtom(parameter,body){
@@ -25,5 +25,5 @@ class MapsToFunction(parameter:Atom, body:Atom):BinaryAtom(parameter,body){
 
     override fun debugInfo() = "[${left.debugInfo()} ↦ ${right.debugInfo()}]"
     override fun info() = "(${left.info()} ↦ ${right.info()})"
-
+    override fun uniform() = "(${left.uniform()}|->${right.uniform()})"
 }

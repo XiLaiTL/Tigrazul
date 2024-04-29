@@ -10,6 +10,7 @@ class Term():SingleAtom(){
 
     override fun debugInfo() = "[Term : ${type.info()}]"
     override fun info() = "[Term : ${type.info()}]"
+    override fun uniform() = "_"
 }
 
 class Identifier(
@@ -27,4 +28,5 @@ class Identifier(
     override fun debugInfo() = "[$name : ${type.info()}"+
                 if(value is Term) "]" else " := ${value.debugInfo()} ]"
     override fun info() = "[$name : ${type.info()}]"
+    override fun uniform() = if(value is Term) "($name:${type.info()})" else "($name<-$resourceLocation)" //nominal的比较方式，只比较名字！
 }

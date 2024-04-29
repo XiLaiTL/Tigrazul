@@ -9,8 +9,5 @@ class Applied(
 
     override fun debugInfo() = "[${left.debugInfo()} ▷ ${right.debugInfo()}]"
     override fun info() = "(${left.info()} ▷ ${right.info()})"
-    fun reduce(){
-
-
-    }
+    override fun uniform() = "(${left.uniform()}|>${right.uniform()})"
 }

@@ -8,5 +8,5 @@ data class ResourceLocation(
         val default = ResourceLocation("fun.vari","default")
     }
 
-    override fun toString(): String = "$namespace:$path"
+    override fun toString(): String = "$namespace::$path"
 }

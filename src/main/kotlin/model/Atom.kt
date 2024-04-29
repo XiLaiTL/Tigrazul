@@ -8,5 +8,5 @@ sealed class Atom: Node<Atom>, IRUsee {
     abstract val type:Atom
     abstract fun debugInfo():String
     abstract fun info():String
-
+    abstract fun uniform():String
 }
