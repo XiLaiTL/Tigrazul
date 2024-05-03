@@ -37,6 +37,16 @@ class Scope<R> {
         return null
     }
 
+    fun compute(name:String,action:()->R): R{
+        val res = get(name)
+        if(res == null){
+            val newRes = action()
+            set(name,newRes)
+            return newRes
+        }
+        return res
+    }
+
     inline fun <reified T:R > getDirectly(name: String): T? =
         when(val scopeValue = get(name)){
             is T -> scopeValue;

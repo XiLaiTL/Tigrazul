@@ -13,6 +13,7 @@ statement
 declaration
     : module=(RATAIL|GETS|CONSEQUENCE) identifier ':' atom ';' #termDeclaration
     | module=(GETS|CONSEQUENCE) identifier (':' TYPE)? ':=' '{' constructor* '}' ';' #constructorDeclaration
+    //TODO： 这里应该支持函数类型作为类型，构造器本身是某个函数类型
     | module=(RATAIL|GETS|CONSEQUENCE) assignmentAtom ';' #assignmentDeclaration
     ;
 
@@ -22,7 +23,7 @@ atom
     ;
 primaryAtom
     : '(' atom ')' #parenAtom
-    | identifier #identifierAtom
+    | identifier (GETS identifier)* #identifierAtom
     | TYPE #typeAtom
     | STRING PIPE IMPORT #moduleAtom
     | '{' branch* '}'  #patternAtom
@@ -38,8 +39,8 @@ branch
     ;
 
 constructor
-    : '.' identifier ';'
-    | '.' identifier ':' atom ';'
+    : GETS identifier ';'
+    | GETS identifier ':' atom ';'
     ;
 
 //peanoIdentifier
@@ -80,5 +81,5 @@ fragment CHAR
 fragment ESCAPE_SEQUENCE: '\\' ["\\];
 
 LINE_COMMENT
-    : '#'  ~[\r\n]* -> skip
+    : '--'  ~[\r\n]* -> skip
     ;

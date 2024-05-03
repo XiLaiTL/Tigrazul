@@ -32,17 +32,35 @@ class TigrazulMainVisitor(): TrigrazulBaseVisitor<Atom>() {
     }
 
     override fun visitIdentifierAtom(ctx: TrigrazulParser.IdentifierAtomContext): Atom {
-        val name = ctx.identifier().VARIABLE().text
-        val atom = scope[name]?:Identifier(name)
-        return atom
+        if(ctx.identifier().size == 1){
+            val name = ctx.identifier(0).VARIABLE().text
+            val atom = scope.compute(name) { Identifier(name) }
+            return atom
+        }
+        if(ctx.identifier().size == 2){ //TODO: 从DataSet中取出Identifier
+            val name = ctx.identifier(0).VARIABLE().text
+            val setName = ctx.identifier(1).VARIABLE().text
+            val setAtom  = scope[setName]
+            if(setAtom is Identifier){
+                val setAtomValue = setAtom.value
+                if(setAtomValue is DataSet){
+                    return setAtomValue.get(name)?:Identifier(name)
+                }
+            }
+
+        }
+        throw TigrazulVisitorException at TrigrazulParser.IdentifierAtomContext::class
     }
     override fun visitTypeAtom(ctx: TrigrazulParser.TypeAtomContext): Atom {
         return Type
     }
 
     override fun visitPatternAtom(ctx: TrigrazulParser.PatternAtomContext): Atom {
-        //TODO 模式匹配是最关键的地方
-        return super.visitPatternAtom(ctx)
+        val patternSet = PatternSet()
+        for(branchCtx in ctx.branch()){
+            patternSet.add(visit(branchCtx))
+        }
+        return patternSet
     }
 
     override fun visitAssignmentAtom(ctx: TrigrazulParser.AssignmentAtomContext): Atom {
@@ -57,15 +75,14 @@ class TigrazulMainVisitor(): TrigrazulBaseVisitor<Atom>() {
         }
         else{
             val type = visit(ctx.type)
+            //这里要基于type去访问value，因为这样有些参数的类型才能拿出来
+            identifier.type = type //这里先用term来表示一个类型
             var value = visit(ctx.value)
-            //TODO: 这里要基于type去访问value，因为这样有些参数的类型才能拿出来
             matchingBoundType(type,value)
             //TODO: 这里还得检查value的类型和type的类型匹配与否
-            val (result,success) = matchingType(type,value)
-            if(success) {
-                value = Verified(value,result)
-            }
-            else{
+            matchingType(type,value).onSuccess {
+                value = Verified(value,it)
+            }.onFailure {
                 Logger.error("type different")
             }
 
@@ -88,11 +105,9 @@ class TigrazulMainVisitor(): TrigrazulBaseVisitor<Atom>() {
             }
             else {
                 //TODO("这里做类型检查")
-                val (result,success) = matchingType(last,previous)
-                if(success) {
-                    last = Verified(previous,result)
-                }
-                else{
+                matchingType(last,previous).onSuccess {
+                    last = Verified(previous,it)
+                }.onFailure {
                     Logger.error("type different")
                 }
             }
@@ -106,6 +121,13 @@ class TigrazulMainVisitor(): TrigrazulBaseVisitor<Atom>() {
         if(ctx.left == null || ctx.left.isEmpty()) return last
         for(typedAtomCtx in ctx.left.reversed()){
             val previous = visit(typedAtomCtx)
+            if(previous is Identifier && previous.type == Unknown){
+                val lastType= last.type
+                if( lastType is Function){
+                    previous.type = lastType.current //这里做一次类型推导
+                }
+                //TODO: 这里要不要把lastType给解构了？？不然链会有问题？
+            }
             last = Applied(previous,last)
             //TODO: 这里类型怎么办呢？
         }
@@ -164,9 +186,9 @@ class TigrazulMainVisitor(): TrigrazulBaseVisitor<Atom>() {
 
 
 
-//    override fun visitBranch(ctx: TrigrazulParser.BranchContext): Atom {
-//        return super.visitBranch(ctx)
-//    }
+    override fun visitBranch(ctx: TrigrazulParser.BranchContext): Atom {
+        return visit(ctx.atom())
+    }
 //
 //    override fun visitConstructor(ctx: TrigrazulParser.ConstructorContext): Atom {
 //        return super.visitConstructor(ctx)

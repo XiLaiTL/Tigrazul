@@ -10,7 +10,7 @@ import kotlin.Function
 class Function(parameter:Atom, body:Atom):BinaryAtom(parameter,body) {
     override val type: Atom
         get() = Function(left.type,right.type) //TODO: 对于依赖类型来说，这是否定的！！
-
+        //如果这样，所有类型都需要考虑在调用的时候进行解构，很明显这非常麻烦！
     override fun debugInfo() = "[${left.debugInfo()} → ${right.debugInfo()}]"
     override fun info() = "(${left.info()} → ${right.info()})"
     override fun uniform() = "(${left.uniform()}->${right.uniform()})"
