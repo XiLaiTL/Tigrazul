@@ -11,10 +11,9 @@ statement
     ;
 
 declaration
-    : module=(RATAIL|GETS|CONSEQUENCE) identifier ':' atom ';' #termDeclaration
-    | module=(GETS|CONSEQUENCE) identifier (':' TYPE)? ':=' '{' constructor* '}' ';' #constructorDeclaration
-    //TODO： 这里应该支持函数类型作为类型，构造器本身是某个函数类型
-    | module=(RATAIL|GETS|CONSEQUENCE) assignmentAtom ';' #assignmentDeclaration
+    : module=(RATAIL|GETS|CONSEQUENCE) assignmentAtom ';' #assignmentDeclaration
+    | module=(GETS|CONSEQUENCE) identifier ':' atom ':=' '{' constructor* '}' ';' #constructorDeclaration
+    | module=(RATAIL|GETS|CONSEQUENCE) identifier ':' atom ';' #termDeclaration
     ;
 
 atom
@@ -59,6 +58,14 @@ MAPSTO: '\\mapsto' | '|->' | '↦' ;
 PIPE: '\\triangleright'|'\\rhd' | '|>' | '▷';
 TYPE: 'Type';
 IMPORT: 'Import';
+LPAREN: '(';
+RPAREN: ')';
+LCURL: '{';
+RCURL: '}';
+BRANCH: '|';
+COLON: ':' ;
+SEMICOLON: ';' ;
+DEFINE: ':=';
 
 VARIABLE
     : [A-Za-z] [a-zA-Z0-9_\-]* [a-zA-Z0-9]

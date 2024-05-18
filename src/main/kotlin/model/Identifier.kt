@@ -1,8 +1,5 @@
 package `fun`.vari.tigrazul.model
 
-import `fun`.vari.tigrazul.struct.IList
-import `fun`.vari.tigrazul.struct.IRUse
-import `fun`.vari.tigrazul.struct.IRUser
 
 
 class Term():SingleAtom(){
@@ -29,4 +26,18 @@ class Identifier(
                 if(value is Term) "]" else " := ${value.debugInfo()} ]"
     override fun info() = "[$name : ${type.info()}]"
     override fun uniform() = if(value is Term) "($name:${type.info()})" else "($name<-$resourceLocation)" //nominal的比较方式，只比较名字！
+
+    companion object{
+        fun Atom.isUnknownType():Boolean = this is Identifier && this.value is Term && this.type == Unknown
+        fun Atom.getValue():Atom{
+            return when(this){
+                is Identifier->when(this.value){
+                        is Term -> this
+                        else -> this.value.getValue()
+                    }
+                is Verified->this.value.getValue()
+                else ->this
+            }
+        }
+    }
 }

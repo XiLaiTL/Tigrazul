@@ -2,6 +2,7 @@ package `fun`.vari.tigrazul.action
 
 import `fun`.vari.tigrazul.model.*
 import `fun`.vari.tigrazul.model.Function
+import `fun`.vari.tigrazul.model.Identifier.Companion.isUnknownType
 
 //这里可以用dfs实现
 fun checkUnknownType(atom:Atom):Boolean{
@@ -25,9 +26,10 @@ fun matchingBoundType(type:Atom, value:Atom){
             &&(value is Function ||value is MapsToFunction))
         || (type is Applied && value is Applied))
         ) return
-    if(value.current is Identifier && value.current.type==Unknown) {
+    if(value.current.isUnknownType()) {
         (value.current as Identifier).type=type.current
     }
+    //这里好像没有处理current是复杂applied的部分
     if(type.next!=null && value.next!=null){
         return matchingBoundType(type.next!!,value.next!!)
     }
@@ -42,17 +44,23 @@ fun matchingBoundType(type:Atom, value:Atom){
 //首先需要把value的最终形式求出来，然后得到type
 //把type的最终形式求出来
 //然后比较两个type是否一样
-fun <T> Result.Companion.from(successful:Boolean,value: T): Result<T> {
-    return if(successful) success(value) else failure(Error())
+fun <T> Result.Companion.from(successful:Boolean,value: T, errorMessage:String = ""): Result<T> {
+    return if(successful) success(value) else failure(Error(errorMessage))
 }
 
 fun matchingType(type:Atom,value:Atom):Result<Atom>{
-    val target = type.typeReduce()
-    val matched = value.type.typeReduce()
+    if(value is PatternSet) return matchingPatternType(type,value)
+
+    val target = type.reduce()
+    val matched = value.typeReduce()
 
     //TODO: 这里还是得删掉uses
-    return Result.from(target uniformEqual  matched,matched)
+    return Result.from(target uniformEqual  matched,matched,"target: ${target.uniform()}; find: ${matched.uniform()}")
 }
+
+
+
+
 
 //这里只做字符串比较！
 infix fun Atom.uniformEqual(value:Atom):Boolean{

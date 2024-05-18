@@ -4,6 +4,7 @@ import `fun`.vari.tigrazul.action.matchingBoundType
 import `fun`.vari.tigrazul.action.matchingType
 import `fun`.vari.tigrazul.model.*
 import `fun`.vari.tigrazul.model.Function
+import `fun`.vari.tigrazul.model.Identifier.Companion.isUnknownType
 import `fun`.vari.tigrazul.tree.TrigrazulParser.TO
 import `fun`.vari.tigrazul.tree.TrigrazulParser.MAPSTO
 import `fun`.vari.tigrazul.util.Logger
@@ -83,7 +84,7 @@ class TigrazulMainVisitor(): TrigrazulBaseVisitor<Atom>() {
             matchingType(type,value).onSuccess {
                 value = Verified(value,it)
             }.onFailure {
-                Logger.error("type different")
+                Logger.error("type different ${it.message}")
             }
 
             //Identifier的类型是值的类型，所以这里分离的时候会出问题
@@ -99,8 +100,8 @@ class TigrazulMainVisitor(): TrigrazulBaseVisitor<Atom>() {
         if(ctx.left == null || ctx.left.isEmpty()) return last //TODO:要防止返回类型为Unknown
         for(primaryAtomCtx in ctx.left.reversed()){
             val previous = visit(primaryAtomCtx)
-            if(previous is Identifier &&previous.type==Unknown) {
-                previous.type=last
+            if(previous.isUnknownType()) {
+                (previous as Identifier).type=last
                 last = previous
             }
             else {
@@ -108,8 +109,7 @@ class TigrazulMainVisitor(): TrigrazulBaseVisitor<Atom>() {
                 matchingType(last,previous).onSuccess {
                     last = Verified(previous,it)
                 }.onFailure {
-                    Logger.error("type different")
-                }
+                    Logger.error("type different ${it.message}")                }
             }
         }
         return last
@@ -121,10 +121,10 @@ class TigrazulMainVisitor(): TrigrazulBaseVisitor<Atom>() {
         if(ctx.left == null || ctx.left.isEmpty()) return last
         for(typedAtomCtx in ctx.left.reversed()){
             val previous = visit(typedAtomCtx)
-            if(previous is Identifier && previous.type == Unknown){
+            if(previous.isUnknownType()){
                 val lastType= last.type
                 if( lastType is Function){
-                    previous.type = lastType.current //这里做一次类型推导
+                    (previous as Identifier).type = lastType.current //这里做一次类型推导
                 }
                 //TODO: 这里要不要把lastType给解构了？？不然链会有问题？
             }
