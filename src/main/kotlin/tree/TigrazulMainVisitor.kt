@@ -12,7 +12,7 @@ import `fun`.vari.tigrazul.util.Scope
 
 
 class TigrazulMainVisitor(): TrigrazulBaseVisitor<Atom>() {
-    private val scope:Scope<Atom> = Scope();
+    val scope:Scope<Atom> = Scope();
     private val resourceLocation =ResourceLocation.default; //TODO: add resourceLocation for every module
 
     override fun visitApplication(ctx: TrigrazulParser.ApplicationContext): Atom {

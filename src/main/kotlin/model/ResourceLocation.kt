@@ -9,4 +9,5 @@ data class ResourceLocation(
     }
 
     override fun toString(): String = "$namespace::$path"
+    override fun equals(other: Any?): Boolean = this.toString() == other.toString()
 }

@@ -1,5 +1,6 @@
 package `fun`.vari.tigrazul.action
 
+import `fun`.vari.tigrazul.action.DeBruijnLevel.toDeBruijnLevelAtom
 import `fun`.vari.tigrazul.model.*
 import `fun`.vari.tigrazul.model.Function
 import `fun`.vari.tigrazul.model.Identifier.Companion.isUnknownType
@@ -52,15 +53,42 @@ fun matchingType(type:Atom,value:Atom):Result<Atom>{
     if(value is PatternSet) return matchingPatternType(type,value)
 
     val target = type.reduce()
-    val matched = value.typeReduce()
-
+    val matched = value.type.reduce()
     //TODO: 这里还是得删掉uses
-    return Result.from(target uniformEqual  matched,matched,"target: ${target.uniform()}; find: ${matched.uniform()}")
+    return Result.from(target typeEqual  matched,matched,"\n    target: ${target.uniform()}; \n    findit: ${matched.uniform()}")
 }
 
+//只看reduce之后是不是
+fun Atom.isType():Boolean{
+    fun recurrentIsType(atom: Atom):Boolean{
+        return when(atom){
+            is Function -> atom.right.isType()
+            is MapsToFunction ->atom.right.isType()
+            is Identifier -> atom.type is Type
+            is Verified -> atom.type is Type
+            else -> false
+        }
+    }
+    if(this is Type) return true
+    return recurrentIsType(this)
+}
 
-
-
+//比较两个类型是否一样
+infix fun Atom.typeEqual(currentType:Atom):Boolean{
+    val target = this.toDeBruijnLevelAtom()
+    val current = currentType.toDeBruijnLevelAtom()
+    fun recurrentEqual(target:Atom,current:Atom):Boolean{
+        if(target is Type){
+            return current.isType()
+        }
+        if((target is MapsToFunction && current is MapsToFunction)
+            ||(target is Applied && current is Applied)){
+            return recurrentEqual(target.current, current.current) && recurrentEqual(target.next!!, current.next!!)
+        }
+        return target uniformEqual current
+    }
+    return recurrentEqual(target,current)
+}
 
 //这里只做字符串比较！
 infix fun Atom.uniformEqual(value:Atom):Boolean{
@@ -79,6 +107,7 @@ fun Atom.copy():Atom{
         Type -> Type
         Unknown -> Unknown
         is Identifier -> this //TODO
-        is Verified -> Verified(this.value,this.type.copy()) //TODO
+        is Verified -> Verified(this.left,this.type.copy()) //TODO
+        else -> this
     }
 }

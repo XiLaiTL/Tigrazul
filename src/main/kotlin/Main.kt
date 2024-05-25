@@ -25,7 +25,7 @@ fun App() {
 fun main() = application {
     Window(
         onCloseRequest = ::exitApplication,
-        title = "Lambda Calculator",
+        title = "Tigrazul",
         icon =  BitmapPainter(useResource("icon/icon.png",::loadImageBitmap))
     ) {
         App()

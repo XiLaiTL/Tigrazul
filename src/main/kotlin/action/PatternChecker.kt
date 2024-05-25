@@ -62,9 +62,9 @@ fun depart(type:Atom,patterns:List<Atom>):Boolean{
 fun matchingPatternType(type: Atom, value: PatternSet):Result<Atom>{
     val target = type.reduce()
     for(pattern in value.patterns){
-        val matched = pattern.typeReduce()
-        val successful = target uniformEqual  matched
-        if(!successful) return Result.failure(Error("target: ${target.uniform()}; find: ${matched.uniform()}"))
+        val matched = pattern.type.reduce()
+        val successful = target typeEqual  matched
+        if(!successful) return Result.failure(Error("\n    target: ${target.uniform()}; \n    findit: ${matched.uniform()}"))
     }
 
     //取出列，覆盖范围检查

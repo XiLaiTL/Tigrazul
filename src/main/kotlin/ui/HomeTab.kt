@@ -32,13 +32,14 @@ sealed class HomeTabs{
         override val options: TabOptions
             @Composable
             get() {
-                val title = "Lambda表达式演算"
+                val title = "交互命题解释器"
                 val icon = rememberVectorPainter(Icons.Default.Edit)
                 return remember { TabOptions(index = 1u, title = title, icon = icon) }
             }
 
         @Composable
         override fun Content() {
+            SingleCalculatorPage()
         }
 
     }

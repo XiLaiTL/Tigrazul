@@ -7,8 +7,10 @@ class PatternSet():SingleAtom() {
         patterns.add(pattern)
     }
 
-    override fun debugInfo() = "{\n\t" + patterns.map { it.info() }.joinToString("\n\t") + "\n}"
-    override fun info() = "{\n\t" + patterns.map { it.info() }.joinToString("\n\t") + "\n}"
+    override fun debugInfo() = "{\n    " + patterns.map { it.info() }.joinToString("\n    ") + "\n}"
+    override fun info() = "{\n    " + patterns.map { it.info() }.joinToString("\n    ") + "\n}"
+    override fun plainWithType() =""
+    override fun plain() = ""
     override fun uniform() = "{|"+ patterns.map { it.uniform() }.joinToString(";|") +";}"
 
 }

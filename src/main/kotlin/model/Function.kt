@@ -1,6 +1,6 @@
 package `fun`.vari.tigrazul.model
 
-import kotlin.Function
+import `fun`.vari.tigrazul.action.DeBruijnLevel.toDeBruijnLevelUniform
 
 
 //1. value: MapsToFunction type: Function
@@ -9,21 +9,28 @@ import kotlin.Function
 
 class Function(parameter:Atom, body:Atom):BinaryAtom(parameter,body) {
     override val type: Atom
-        get() = Function(left.type,right.type) //TODO: 对于依赖类型来说，这是否定的！！
+        get() = Function(left.type,right.type)
         //如果这样，所有类型都需要考虑在调用的时候进行解构，很明显这非常麻烦！
     override fun debugInfo() = "[${left.debugInfo()} → ${right.debugInfo()}]"
     override fun info() = "(${left.info()} → ${right.info()})"
-    override fun uniform() = "(${left.uniform()}->${right.uniform()})"
+    override fun plainWithType() ="(${left.plain()} -> ${right.plain()})"
+    override fun plain() = "(${left.plain()} -> ${right.plain()})"
+    override fun uniform(): String {
+        return this.toDeBruijnLevelUniform() // "(${left.uniform()}->${right.uniform()})"
+    }
 }
 
 class MapsToFunction(parameter:Atom, body:Atom):BinaryAtom(parameter,body){
     override val type: Atom
         get() {
-            return Function(left.type,right.type) //TODO: 对于依赖类型来说，这是否定的！！
-            //return MapsToFunction(parameter,body.type)
+            return MapsToFunction(left,right.type)
         }
 
     override fun debugInfo() = "[${left.debugInfo()} ↦ ${right.debugInfo()}]"
     override fun info() = "(${left.info()} ↦ ${right.info()})"
-    override fun uniform() = "(${left.uniform()}|->${right.uniform()})"
+    override fun plainWithType() ="(${left.plainWithType()} |-> ${right.plain()})"
+    override fun plain() = "(${left.plainWithType()} |-> ${right.plain()})"
+    override fun uniform(): String {
+        return this.toDeBruijnLevelUniform() //"(${left.uniform()}|->${right.uniform()})"
+    }
 }

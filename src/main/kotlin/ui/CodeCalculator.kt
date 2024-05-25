@@ -14,14 +14,22 @@ import androidx.compose.material.icons.filled.Done
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import `fun`.vari.tigrazul.tree.analysis
+import `fun`.vari.tigrazul.util.Logger
 import kotlinx.coroutines.CoroutineScope
 import java.awt.Toolkit
 import java.awt.datatransfer.StringSelection
 
 @Composable
 fun CodeCalculatorPage() {
-    var inputText by remember { mutableStateOf("PRINT (\\lambda x.y x);") }
+    var inputText by remember { mutableStateOf("""
+            |-Nat: Type;
+            |-Identify : (A:Type)|->A->A;
+            |-Test: Nat->Nat 
+                  := Nat |> Identify;
+    """.trimIndent()) }
     var outputText by remember { mutableStateOf("") }
 
 
@@ -54,9 +62,8 @@ fun CodeCalculatorPage() {
             ){
                 Button(
                     onClick = {
-//                        LambdaReduce.clearScope()
-//                        LambdaReduce.calculate(inputText)
-//                        outputText = Action.messageList.joinToString("\n")
+                        analysis(inputText)
+                        outputText = Logger.messageList.joinToString("\n")
                     }
                 ) {
                     Icon(Icons.Default.Done,"运行")
@@ -65,7 +72,7 @@ fun CodeCalculatorPage() {
                 Spacer(Modifier.width(10.dp))
                 Button(
                     onClick = {
-//                        Action.messageList.clear()
+                        Logger.clear()
                         outputText = ""
                     }
                 ){
@@ -90,12 +97,16 @@ fun CodeCalculatorPage() {
             ){
                 if(outputText.isNotBlank()){
                     itemsIndexed(outputText.split("\n")){ index,str->
-                        if(str.couldParseLatex()){
-                            Latex(str.replace(" ","\\;"), "codeOutputText$index", modifier = Modifier.fillMaxWidth(0.98f), alignment = Alignment.Start)
-                        }
-                        else{
-                            Text(str)
-                        }
+                        if(str.contains("[INFO]:")) Text(str )
+                        else if(str.contains("[WARN]:"))  Text(str, color = Color.Yellow )
+                        else if(str.contains("[ERROR]:"))  Text(str, color = Color.Red )
+                        Spacer(Modifier.height(10.dp))
+//                        if(str.couldParseLatex()){
+//                            Latex(str.replace(" ","\\;"), "codeOutputText$index", modifier = Modifier.fillMaxWidth(0.98f), alignment = Alignment.Start)
+//                        }
+//                        else{
+//                            Text(str)
+//                        }
                     }
                 }
             }
