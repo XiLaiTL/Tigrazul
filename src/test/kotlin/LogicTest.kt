@@ -50,8 +50,14 @@ class LogicTest {
             |-FORALL := s:Type |-> p:(s->Type) |->x:s|->x |> p;
             |-A:Type;
             |-B:Type;
-            |-test1 : A->B-> B |> A |> AND
-                := a:A |->b:B|-> C:Type |-> f:(A->B->C) |-> (b|>a|>f);
+            |-test1 : A -> B -> B |> A |> AND
+                := a:A 
+                |-> b:B 
+                -- f0:(B |> A |> AND)
+                -- f0:(C:Type|->(A->B->C)->C)
+                |-> C:Type 
+                |-> f:(A->B->C) 
+                |-> (b|>a|>f);
         """.trimIndent()
         uniform(code)
 
@@ -181,7 +187,7 @@ class LogicTest {
             |-FORALL := s:Type |-> p:(s->Type) |-> x:s |->x |> p;
             |-S:Type;
             |-P:S->Type;
-            |-Q:= (s:S)|->(s|>P -> FALSE);
+            |-Q: (s:S)|->(s|>P -> FALSE);
             |-test1: (Q |> S |> EXIST) -> ((P |> S |> FORALL)->FALSE)
                 := f1:(Q |> S |> EXIST) 
                 -- f1: (a:Type|->((x:S|->((x |> P->FALSE)->a))->a))
@@ -204,7 +210,7 @@ class LogicTest {
             |-FORALL := s:Type |-> p:(s->Type) |-> x:s |->x |> p;
             |-S:Type;
             |-P:S->Type;
-            |-Q:= (s:S)|->(s|>P -> FALSE);
+            |-Q: (s:S)|->(s|>P -> FALSE);
             |-test1 : ((P |> S |> EXIST)->FALSE) ->  (Q |> S |> FORALL)
                 := f1:((P |> S |> EXIST)->FALSE) 
                 -- f1: ((a:Type |->((x:S|->((x |> P)->a))->a))->FALSE)

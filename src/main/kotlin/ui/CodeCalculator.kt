@@ -100,6 +100,7 @@ fun CodeCalculatorPage() {
                         if(str.contains("[INFO]:")) Text(str )
                         else if(str.contains("[WARN]:"))  Text(str, color = Color.Yellow )
                         else if(str.contains("[ERROR]:"))  Text(str, color = Color.Red )
+                        else Text(str)
                         Spacer(Modifier.height(10.dp))
 //                        if(str.couldParseLatex()){
 //                            Latex(str.replace(" ","\\;"), "codeOutputText$index", modifier = Modifier.fillMaxWidth(0.98f), alignment = Alignment.Start)

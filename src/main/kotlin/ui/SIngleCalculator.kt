@@ -36,21 +36,22 @@ fun SingleCalculatorPage(){
     var funcInputText by remember { mutableStateOf("") }
     var outputText by remember { mutableStateOf("") }
     var showScript by remember { mutableStateOf(false) }
-    var inputList =  mutableStateListOf<String>()
-    var checkedList = mutableStateListOf<Int>()
+    val inputList = remember { (mutableStateListOf<String>()) }
+    val checkedList = remember { mutableStateListOf<Int>() }
     Row (
         modifier = Modifier.fillMaxSize()
     ){
         Column (
             modifier = Modifier.fillMaxWidth(0.5f)
         ){
-            if(showScript)
+            if(showScript){
                 TextField(
                     value = scriptInputText,
                     onValueChange = { scriptInputText = it },
                     modifier = Modifier.fillMaxHeight(0.3f).fillMaxWidth(),
-                    label = { Text("代码片段") }
+                    label = { Text("预设前提") }
                 )
+            }
 
             TextField(
                 value = inputText,
@@ -97,17 +98,15 @@ fun SingleCalculatorPage(){
                     onClick = {
                         if (!showScript) {
                             showScript = true
-                            //scriptInputText = ""
-                        } else if (scriptInputText.isNotBlank()) {
-                            scriptInputText = ""
+                        } else {
                             showScript = false
                         }
                     }
                 ) {
                     if (!showScript)
-                        Text("预设环境")
+                        Text("预设前提")
                     else {
-                        Text("清空预设")
+                        Text("收起预设")
                         IconButton(
                             modifier = Modifier.fillMaxWidth(),
                             onClick = {
@@ -115,7 +114,7 @@ fun SingleCalculatorPage(){
                                 showScript = false
                             }
                         ) {
-                            Icon(Icons.Default.Clear, "清除代码片段")
+                            Icon(Icons.Default.Clear, "清除证明前提")
                         }
                     }
                 }
@@ -127,6 +126,7 @@ fun SingleCalculatorPage(){
                     modifier = Modifier.fillMaxWidth(),
                     onClick = {
                         Logger.clear()
+                        outputText=""
                     }
                 ){
                     Text("清空输出")
@@ -233,6 +233,7 @@ fun SingleCalculatorPage(){
                     }
                     else if(str.contains("[WARN]:"))  Text(str, color = Color.Yellow )
                     else if(str.contains("[ERROR]:"))  Text(str, color = Color.Red )
+                    else Text(str)
                     Spacer(Modifier.height(10.dp))
 //                    Latex(str.replace(" ","\\;"), "outputText$index",
 //                        alignment = if(index==0) Alignment.CenterHorizontally else Alignment.Start)

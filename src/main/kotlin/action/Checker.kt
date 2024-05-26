@@ -62,14 +62,15 @@ fun matchingType(type:Atom,value:Atom):Result<Atom>{
 fun Atom.isType():Boolean{
     fun recurrentIsType(atom: Atom):Boolean{
         return when(atom){
+            is Type -> true
             is Function -> atom.right.isType()
             is MapsToFunction ->atom.right.isType()
-            is Identifier -> atom.type is Type
+//            is Identifier -> atom.type is Type
             is Verified -> atom.type is Type
             else -> false
         }
     }
-    if(this is Type) return true
+    //if(this is Type) return true
     return recurrentIsType(this)
 }
 
