@@ -16,6 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import `fun`.vari.tigrazul.tree.analysis
 import `fun`.vari.tigrazul.tree.depart
+import `fun`.vari.tigrazul.util.LanguageSupport.english
 import `fun`.vari.tigrazul.util.Logger
 import java.awt.Toolkit
 import java.awt.datatransfer.StringSelection
@@ -49,7 +50,7 @@ fun SingleCalculatorPage(){
                     value = scriptInputText,
                     onValueChange = { scriptInputText = it },
                     modifier = Modifier.fillMaxHeight(0.3f).fillMaxWidth(),
-                    label = { Text("预设前提") }
+                    label = { Text("预设前提".english("Precondition")) }
                 )
             }
 
@@ -59,7 +60,7 @@ fun SingleCalculatorPage(){
                     inputText = it
                     },
                 modifier = Modifier.fillMaxWidth(),
-                label = { Text("命题/类型") }
+                label = { Text("命题/类型".english("Proposition and Type")) }
             )
             Latex(inputText.replace(" ","\\;"),"inputText")
 
@@ -104,9 +105,9 @@ fun SingleCalculatorPage(){
                     }
                 ) {
                     if (!showScript)
-                        Text("预设前提")
+                        Text("预设前提".english("Precondition"))
                     else {
-                        Text("收起预设")
+                        Text("收起预设".english("Close Precondition"))
                         IconButton(
                             modifier = Modifier.fillMaxWidth(),
                             onClick = {
@@ -114,7 +115,7 @@ fun SingleCalculatorPage(){
                                 showScript = false
                             }
                         ) {
-                            Icon(Icons.Default.Clear, "清除证明前提")
+                            Icon(Icons.Default.Clear, "清除证明前提".english("Clear Precondition"))
                         }
                     }
                 }
@@ -129,7 +130,7 @@ fun SingleCalculatorPage(){
                         outputText=""
                     }
                 ){
-                    Text("清空输出")
+                    Text("清空输出".english("Clear Output"))
                 }
                 Spacer(Modifier.height(5.dp))
                 Button(
@@ -150,11 +151,11 @@ fun SingleCalculatorPage(){
                     Column (
                         horizontalAlignment = Alignment.CenterHorizontally
                     ){
-                        Text("函数拆解")
+                        Text("函数拆解".english("Function Decomposition"))
                         TextField(
                             value = funcInputText,
                             onValueChange = { funcInputText = it },
-                            label = { Text("函数名") }
+                            label = { Text("函数名".english("Function Name")) }
                         )
                     }
                 }
@@ -167,7 +168,7 @@ fun SingleCalculatorPage(){
                         else inputList.add(checkedList[0]+1,"|->")
                     }
                 ){
-                    Text("下一步骤")
+                    Text("下一步骤".english("Next Step"))
                 }
                 Spacer(Modifier.height(5.dp))
                 Button(
@@ -178,7 +179,7 @@ fun SingleCalculatorPage(){
                         checkedList.clear()
                     }
                 ){
-                    Text("删除选中")
+                    Text("删除选中".english("Delete Selected"))
                 }
                 Spacer(Modifier.height(5.dp))
                 Button(
@@ -196,7 +197,7 @@ fun SingleCalculatorPage(){
                         outputText = Logger.messageList.joinToString("\n")
                     }
                 ){
-                    Text("开始检查")
+                    Text("开始检查".english("Start Verification"))
                 }
                 Spacer(Modifier.height(5.dp))
                 Button(
@@ -212,7 +213,7 @@ fun SingleCalculatorPage(){
                         Toolkit.getDefaultToolkit().systemClipboard.setContents(StringSelection(code),null)
                     }
                 ){
-                    Text("复制证明")
+                    Text("复制证明".english("Copy Proof"))
                 }
                 Spacer(Modifier.width(10.dp))
             }

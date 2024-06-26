@@ -55,16 +55,16 @@ tasks.generateGrammarSource {
 
 compose.desktop {
     application {
-        mainClass = "MainKt"
+        mainClass = "fun.vari.tigrazul.MainKt"
         javaHome = System.getenv("JAVA_HOME")
         nativeDistributions {
             //includeAllModules = true
             modules("java.instrument", "jdk.unsupported")
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi,TargetFormat.Exe, TargetFormat.Deb)
-            packageName = "tigrazul"
+            packageName = "Tigrazul"
             packageVersion = "1.0.0"
             description = "Tigrazul"
-            copyright = "© 2023 XiLaiTL. All rights reserved."
+            copyright = "© 2024 XiLaiTL. All rights reserved."
             vendor = "BIT"
             //licenseFile.set(project.file("LICENSE.txt"))
             windows{

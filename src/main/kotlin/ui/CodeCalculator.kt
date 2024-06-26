@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import `fun`.vari.tigrazul.tree.analysis
+import `fun`.vari.tigrazul.util.LanguageSupport.english
 import `fun`.vari.tigrazul.util.Logger
 import kotlinx.coroutines.CoroutineScope
 import java.awt.Toolkit
@@ -66,8 +67,8 @@ fun CodeCalculatorPage() {
                         outputText = Logger.messageList.joinToString("\n")
                     }
                 ) {
-                    Icon(Icons.Default.Done,"运行")
-                    Text("运行")
+                    Icon(Icons.Default.Done,"运行".english("Execute"))
+                    Text("运行".english("Execute"))
                 }
                 Spacer(Modifier.width(10.dp))
                 Button(
@@ -76,8 +77,8 @@ fun CodeCalculatorPage() {
                         outputText = ""
                     }
                 ){
-                    Icon(Icons.Default.Clear,"清空输出")
-                    Text("清空输出")
+                    Icon(Icons.Default.Clear,"清空输出".english("Clear Output"))
+                    Text("清空输出".english("Clear Output"))
                 }
                 Spacer(Modifier.width(10.dp))
                 Button(
@@ -85,8 +86,8 @@ fun CodeCalculatorPage() {
                         Toolkit.getDefaultToolkit().systemClipboard.setContents(StringSelection(outputText),null)
                     }
                 ){
-                    Icon(Icons.Default.AddCircle,"复制")
-                    Text("复制")
+                    Icon(Icons.Default.AddCircle,"复制".english("Copy"))
+                    Text("复制".english("Copy"))
                 }
                 Spacer(Modifier.width(10.dp))
 

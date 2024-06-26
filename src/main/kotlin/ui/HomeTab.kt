@@ -9,6 +9,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import cafe.adriel.voyager.navigator.tab.*
+import `fun`.vari.tigrazul.util.LanguageSupport.english
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -18,7 +19,7 @@ sealed class HomeTabs{
         override val options: TabOptions
             @Composable
             get() {
-                val title = "代码片段解释器"
+                val title = "代码片段解释器".english("Code Snippet Interpreter")
                 val icon = rememberVectorPainter(Icons.Default.Build)
                 return remember { TabOptions(index = 0u, title = title, icon = icon) }
             }
@@ -32,7 +33,7 @@ sealed class HomeTabs{
         override val options: TabOptions
             @Composable
             get() {
-                val title = "交互命题解释器"
+                val title = "交互命题解释器".english("Interactive Propositional Logic Interpreter")
                 val icon = rememberVectorPainter(Icons.Default.Edit)
                 return remember { TabOptions(index = 1u, title = title, icon = icon) }
             }
