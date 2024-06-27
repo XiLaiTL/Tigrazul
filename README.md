@@ -2,6 +2,10 @@
 
 Tigrazul is an Interpreter for proposition proof based on the theory of type lambda calculus. It can help people to deal with the proposition written in first-order logic.
 
+## Experiment Dataset
+
+[Here](./docs/test.pdf)
+
 ## Main module
 
 The proof assistant UI tool includes two basic modules, and you can switch between modules by clicking on the name at the top
@@ -87,3 +91,4 @@ Enter the code snippet interpreter.
 Set the code in the input area. Click on "Execute". then, Check the output.
 
 ![Code Execution](./docs/picture-readme/run.png)
+
